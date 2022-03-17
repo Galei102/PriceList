@@ -1,0 +1,39 @@
+﻿@model IEnumerable<TestPriceList.Models.PriceList>
+
+@{
+    ViewData["Title"] = "Прайсы";
+}
+
+<h1>Прайсы</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Прайс-лист</a>
+</p>
+<table class="table table-sort table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td class="edit" data-id="@item.Id">
+                <a asp-controller="Tovars" asp-action="Index" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="~/js/Sorting.js"></script>
+}

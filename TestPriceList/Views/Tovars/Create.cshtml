@@ -1,0 +1,87 @@
+﻿@model TestPriceList.ViewModels.ColumnTovarViewModel
+
+@{
+    ViewData["Title"] = "Добавление товара";
+}
+
+<h2>Добавление товара</h2>
+
+<hr />
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frm" })) 
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <input type="hidden" name="PriceListId" value="@ViewBag.PricesListId" />
+                </div>
+                <div class="form-group InputPadding">
+                    <label asp-for="AddTovarValueColumn.TovarName" class="control-label"><b>Название*</b></label>
+                    <input asp-for="AddTovarValueColumn.TovarName" class="form-control" />
+                    <span asp-validation-for="AddTovarValueColumn.TovarName" class="text-danger"></span>
+                </div>
+                <div class="form-group InputPadding">
+                    <label asp-for="AddTovarValueColumn.KodTovar" class="control-label"><b>Артикул*</b></label>
+                    <input asp-for="AddTovarValueColumn.KodTovar" class="form-control" />
+                    <span asp-validation-for="AddTovarValueColumn.KodTovar" class="text-danger"></span>
+                </div>
+                <table class="table table-bordered table-striped Padding">
+                <tbody  id='tbody'>
+                    @{
+                        var index = 0;
+                    }
+                    @foreach (var item in Model.Columns) {
+                        <tr>
+                            <td class="col-4">
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td class="col-8">
+                                @if(item.Types == ColumnTypes.Number)
+                                {
+                                    <input class="form-control" type="number" style="display:none" name="AddTovarValueColumn.ColumnValues[@index].ColumnId" value="@item.Id" />
+                                    <input class="form-control" type="number" name="AddTovarValueColumn.ColumnValues[@index].Value" />
+                                } 
+                                @if(item.Types == ColumnTypes.SingleLineText)
+                                {
+                                    <input class="form-control" type="number" style="display:none" name="AddTovarValueColumn.ColumnValues[@index].ColumnId" value="@item.Id" />
+                                    <input class="form-control" type="text" name="AddTovarValueColumn.ColumnValues[@index].Value" />
+                                }
+                                @if(item.Types == ColumnTypes.MultilineText)
+                                {
+                                    <input class="form-control" type="number" style="display:none" name="AddTovarValueColumn.ColumnValues[@index].ColumnId" value="@item.Id" />
+                                    <textarea class="form-control" type="text" name="AddTovarValueColumn.ColumnValues[@index].Value"></textarea>
+                                }
+                            </td>
+                                @{
+                                    index++;
+                                }
+                        </tr>
+                    }
+                </tbody>
+                </table>
+                <hr />
+                <div class="form-group d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a asp-action="Index" asp-controller="PriceList" class="btn btngray">Закрыть</a>
+                    <input type="submit" value="Сохранить" class="btn btn-success" />
+                </div>
+            </form>
+        </div>
+    </div>
+}
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $('#frm').submit(function( event ) {
+          $('#tbody > tr > td input,textarea').each(function( index ) {
+              const value = $(this).val();
+              if (!value) {                 
+                  alert("Заполните поля колонок!");
+                  event.preventDefault();
+              }
+          });
+        });
+    </script>
+}
+

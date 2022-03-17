@@ -1,0 +1,87 @@
+﻿@model TestPriceList.ViewModels.PricelistDetailViewModel
+
+@using TestPriceList.Models;
+
+@{
+    ViewData["Title"] = @ViewBag.PriceListId;
+}
+
+@if (TempData["SM"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SM"]
+    </div>
+}
+
+<h1>@ViewData["Message"]</h1>
+
+<p>
+    <a asp-action="Create" asp-controller="Tovars" asp-route-id="@ViewBag.PriceListId" class="btn btn-success">+Добавить позицию</a>
+    <a asp-action="Index" asp-controller="PriceList" class="btn btngray">Назад к списку</a>
+</p>
+
+<table class="table table-sort table-bordered">
+    <thead>
+        <tr>
+            <th>
+               @Html.DisplayNameForInnerType((Tovar p) => p.Name)
+            </th>
+            <th>
+               @Html.DisplayNameForInnerType((Tovar p) => p.KodTovar)
+            </th>
+            @foreach (var column in Model.Columns)
+            {
+                <th>@Html.DisplayFor(modelItem => column.Name)</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Tovars) {
+        <tr>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
+            </td>
+            <td class="tovarEdit" data-id="@item.Id" data-propertyName="@nameof(item.KodTovar)">@Html.DisplayFor(modelItem => item.KodTovar)</td>
+            @foreach (var value in item.Values)
+            {
+                <td class="valueEdit" data-id="@value.Id">@Html.DisplayFor(modelItem => value.Name)</td>
+            }             
+        </tr>
+    }
+    </tbody>
+</table>
+
+
+
+@section Scripts {
+        <script src="~/js/Sorting.js"></script> 
+        <script src="https://www.appelsiini.net/download/jquery.jeditable.js"></script>     
+        <script>
+            $(document).ready(function () {
+                $('.tovarEdit').editable('/tovars/editbypropertyname', {
+                    tooltip: 'Нажмите, чтобы отредактировать меня...',
+                    width: 'none',
+                    height: 'none',
+                    submitdata: function () {
+                        return {
+                            tovarId: $(this).data('id'),
+                            propertyName: $(this).data('propertyname')
+                        }
+                    },
+                    callback: function (intValue) {}
+                })
+
+                $('.valueEdit').editable('/tovars/editvalue', {
+                    tooltip: 'Нажмите, чтобы отредактировать меня...',
+                    width: 'none',
+                    height: 'none',
+                    submitdata: function () {
+                        return {
+                            valueId: $(this).data('id')
+                        }
+                    },
+                    callback: function (valueColumn) {}
+                })
+            })
+        </script>
+}

@@ -1,0 +1,108 @@
+﻿@model TestPriceList.ViewModels.PriceListViewModel
+
+@{
+    ViewData["Title"] = "Прайс-лист";
+}
+
+<h2>Добавление прайс-листа</h2>
+
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frm" })) 
+{
+    @Html.AntiForgeryToken()
+    <div class="BottomPadding ">
+        <input type="submit" class="btn btn-success" value="Продолжить" />
+        <a asp-action="Index" class="btn btngray">Отмена</a>
+    </div>
+    <div class="form-group BottomPadding ">
+        <label asp-for="Name" class="control-label"><b>Название прайс-листа*</b></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <table class="table table-bordered" id="modelBlock">
+        <thead>
+            <tr class="modelItem">                
+            </tr>
+        </thead>
+    </table>
+    <p><a class="addLink btn btn-warning">Добавить колонку</a></p>    
+}
+
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        var options = string.Empty;
+        foreach (var columnTypes in (ColumnTypes[]) Enum.GetValues(typeof(ColumnTypes)))
+        {
+            options += $"<option value=\"{(int)columnTypes}\">{columnTypes.GetDisplayName()}</option>";
+        }
+    }
+    <script>
+        $(function () {
+            var index = 0; 
+            var columnNumber = 0;
+            $('.addLink').click (function()
+            {
+                if (columnNumber == 0) {
+                    index = 0;
+                }
+
+                var opt = '@Html.Raw(options)';
+                var html2Add= 
+                    "<tbody id='tbody'>" +
+                        "<tr class='modelItem'>" +
+                            "<th scope='col'>Колонка " + 
+                            (index+1) +
+                            "</th>" + 
+                            "<td>" + 
+                                "<input type='text' class='form-control columnName' name='Columns["+index+"].name' />" +
+                            "</td>" +
+                            "<td>" +
+                                "<select type='text' class='form-select columnType' name='Columns["+index+"].types'>" +opt+ "</select>" +
+                            "</td>" +
+                            "<td class='col-1'>" +
+                                "<input type='button' value='удалить' class='btn btn-danger'/>" +
+                            "</td></tr>" +
+                    "</tbody>";
+                $('#modelBlock').append(html2Add);
+
+                Array.from(document.querySelectorAll('input[type="button"]')).forEach(function(e) {
+                    e.addEventListener('click', function() {
+                        var a = this.closest('tbody');
+                        a.parentElement.removeChild(a);
+                        columnNumber--;
+
+                        index = -1;
+                        $('#modelBlock > tbody').map((i, el) => {
+                            index++;
+                            rowIndex = index + 1;
+                            $(el).find('tr > th').text('Колонка ' + index);
+                            $(el).find('tr > td > .columnName').attr('name', "Columns["+index+"].name");
+                            $(el).find('tr > td > .columnType').attr('name', "Columns["+index+"].types");
+                        });
+                    });
+                });
+
+                index++;
+                columnNumber++;
+            })
+        })
+
+        $('#frm').submit(function( event ) {
+          $('#tbody > tr > td > input[type=text]').each(function( index ) {
+              const value = $(this).val();
+              if (!value) {
+                  alert("Заполните колонки!");
+                  event.preventDefault();
+              }
+          });
+        });
+    </script>
+}
+
+
+

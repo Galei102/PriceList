@@ -1,0 +1,92 @@
+﻿@model TestPriceList.ViewModels.ListEditTovarValuesViewModel
+
+@{
+    ViewData["Title"] = "Редактирование товара";
+}
+
+<h2>Редактирование товара</h2>
+
+<hr />
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frm" })) 
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <input type="hidden" asp-for="Tovars.PriceListId"  />
+                </div>
+                <div class="form-group InputPadding">
+                    <label asp-for="Tovars.Name" class="control-label"><b>Название*</b></label>
+                    <input asp-for="Tovars.Name" class="form-control" />
+                    <span asp-validation-for="Tovars.Name" class="text-danger"></span>
+                </div>
+                <div class="form-group InputPadding">
+                    <label asp-for="Tovars.KodTovar" class="control-label"><b>Артикул*</b></label>
+                    <input asp-for="Tovars.KodTovar" class="form-control" />
+                    <span asp-validation-for="Tovars.KodTovar" class="text-danger"></span>
+                </div>
+                <table class="table table-bordered table-striped Padding">
+                <tbody  id='tbody'>
+                        @{
+
+                            var item = 0;
+                        }
+                        @for (int index = 0;  index < Model.Column.Count; index++)
+                        {
+                        <tr>
+                            <td class="col-4">
+                                @Model.Column[index].Name
+                            </td>
+                            
+                            <td>
+                                @if(@Model.Column[index].Types == ColumnTypes.Number)
+                                {
+                                    <input class="form-control" type="number" style="display:none" name="ValueColumns[@item].Id" value="@Model.ValueColumns[index].Id" />
+                                    <input class="form-control" type="number" style="display:none" name="ValueColumns[@item].ColumnId" value="@Model.Column[index].Id" />
+                                    <input type="number" name="ValueColumns[@item].Name" value="@Model.ValueColumns[index].Name"  class="form-control"/>
+                                }
+                                @if(@Model.Column[index].Types == ColumnTypes.SingleLineText)
+                                {
+                                    <input class="form-control" type="number" style="display:none" name="ValueColumns[@item].Id" value="@Model.ValueColumns[index].Id" />
+                                    <input class="form-control" type="number" style="display:none" name="ValueColumns[@item].ColumnId" value="@Model.Column[index].Id" />
+                                    <input type="text" name="ValueColumns[@item].Name" value="@Model.ValueColumns[index].Name"  class="form-control"/>
+                                }
+                                @if(@Model.Column[index].Types == ColumnTypes.MultilineText)
+                                {
+                                    <input class="form-control" type="number" style="display:none" name="ValueColumns[@item].Id" value="@Model.ValueColumns[index].Id" />
+                                    <input class="form-control" type="number" style="display:none" name="ValueColumns[@item].ColumnId" value="@Model.Column[index].Id" />
+                                    <textarea name="ValueColumns[@item].Name" class="form-control">@Model.ValueColumns[index].Name</textarea>
+                                }
+                            </td>
+                                @{
+                                    item++;
+                                }
+                            </tr>
+                    }
+                </tbody>
+                </table>
+                <hr />
+                <div class="form-group d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a asp-action="Index" asp-route-id="@Model.Tovars.PriceListId" asp-controller="Tovars" class="btn btngray">Закрыть</a>
+                    <input type="submit" value="Сохранить" class="btn btn-success" />
+                    <a asp-action="Delete" class="delete btn btn-danger" asp-route-id="@Model.Tovars.Id">Удалить</a>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(function ()  /*Подверждение удаление */ {
+            $("a.delete").click(function () {
+                if (!confirm("Вы уверены что хотите удалить?")) return false;
+            });
+        });
+    </script>
+}

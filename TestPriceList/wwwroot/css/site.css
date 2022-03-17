@@ -1,0 +1,41 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.btngray {
+    color: #000;
+    background-color: #dee2e6;
+    border-color: #dee2e6;
+}
+
+.BottomPadding {
+    margin-bottom: 20px;
+}
+
+a {
+    text-decoration: none; /* Отменяем подчеркивание у ссылки */
+}
+
+.InputPadding {
+    margin-bottom: 18px;
+}
+
+.Padding {
+    margin-bottom: 30px;
+}
+
